@@ -1,0 +1,8 @@
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .animate-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+}
