@@ -1,26 +1,174 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+/* Healthcare-specific CSS variables */
+@layer theme {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Medical colors */
+    --color-medical-primary: 33 150 243;
+    --color-medical-secondary: 76 175 80;
+    --color-medical-accent: 255 152 0;
+    --color-medical-danger: 244 67 54;
+    --color-medical-warning: 255 193 7;
+    --color-medical-info: 0 188 212;
+
+    /* Role colors */
+    --color-admin: 156 39 176;
+    --color-physiotherapist: 33 150 243;
+    --color-receptionist: 76 175 80;
+    --color-patient: 255 152 0;
+
+    /* Semantic colors */
+    --color-success: rgb(var(--color-medical-secondary));
+    --color-error: rgb(var(--color-medical-danger));
+    --color-warning: rgb(var(--color-medical-warning));
+    --color-info: rgb(var(--color-medical-info));
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-medical;
+  }
+}
+
+@layer components {
+  /* Medical-specific components */
+  .medical-card {
+    @apply bg-white rounded-lg shadow-medical border border-gray-200 p-6;
+  }
+
+  .patient-status {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .patient-status--active {
+    @apply bg-green-100 text-green-800;
+  }
+
+  .patient-status--inactive {
+    @apply bg-gray-100 text-gray-800;
+  }
+
+  .appointment-status {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .appointment-status--scheduled {
+    @apply bg-blue-100 text-blue-800;
+  }
+
+  .appointment-status--completed {
+    @apply bg-green-100 text-green-800;
+  }
+
+  .appointment-status--cancelled {
+    @apply bg-red-100 text-red-800;
+  }
+
+  /* Role-based styling */
+  .role-admin {
+    @apply border-l-4 border-admin;
+  }
+
+  .role-physiotherapist {
+    @apply border-l-4 border-physiotherapist;
+  }
+
+  .role-receptionist {
+    @apply border-l-4 border-receptionist;
+  }
+
+  .role-patient {
+    @apply border-l-4 border-patient;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .animate-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .animate-out {
+    animation: fadeOut 0.3s ease-in-out;
+  }
+}
+
+/* Healthcare-specific animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Responsive design for medical devices */
+@media (max-width: 768px) {
+  .medical-card {
+    @apply p-4;
+  }
+
+  .sidebar {
+    @apply fixed inset-y-0 left-0 z-50 w-64 transform -translate-x-full transition-transform duration-200 ease-in-out;
+  }
+
+  .sidebar.open {
+    @apply translate-x-0;
+  }
+}
+
+/* Print styles for medical documents */
+@media print {
+  .no-print {
+    @apply hidden;
+  }
+
+  .medical-card {
+    @apply shadow-none border-2 border-gray-300;
+  }
+
+  .page-break {
+    page-break-before: always;
+  }
 }
