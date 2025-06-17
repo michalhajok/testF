@@ -1,4 +1,5 @@
 import Navigation from "./Navigation";
+import Avatar from "../ui/Avatar";
 
 export default function Header() {
   return (
