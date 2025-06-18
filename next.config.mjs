@@ -1,26 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Next.js 15.3 specific configurations
-  turbopack: {
-    // Enable Turbopack for faster builds
-    experimental: true,
-  },
-
-  // Healthcare-specific configurations
-  experimental: {
-    // Enable Server Actions for form handling
-    serverActions: true,
-
-    // Enable new navigation hooks
-    enableNavigationHooks: true,
-
-    // Client instrumentation for healthcare analytics
-    enableClientInstrumentation: true,
-
-    // Dynamic rendering optimizations
-    dynamicIO: true,
-  },
-
   // Image optimization for medical images
   images: {
     domains: ["localhost", "your-backend-domain.com"],
@@ -99,4 +78,4 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+export default nextConfig;
