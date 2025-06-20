@@ -56,26 +56,6 @@ const nextConfig = {
   env: {
     CUSTOM_KEY: process.env.CUSTOM_KEY,
   },
-
-  // Webpack configuration for healthcare-specific optimizations
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
-    // Healthcare-specific webpack optimizations
-    if (!dev && !isServer) {
-      // Optimize for medical applications
-      config.optimization.splitChunks.chunks = "all";
-      config.optimization.splitChunks.cacheGroups = {
-        ...config.optimization.splitChunks.cacheGroups,
-        medical: {
-          name: "medical",
-          chunks: "all",
-          test: /[\\/]src[\\/](components|hooks|lib)[\\/](medical|healthcare)/,
-          priority: 20,
-        },
-      };
-    }
-
-    return config;
-  },
 };
 
 export default nextConfig;
