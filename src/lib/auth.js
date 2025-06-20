@@ -1,4 +1,4 @@
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 export function login({ email, password }) {
   return apiFetch("/auth/login", {
@@ -21,4 +21,17 @@ export function getUserFromToken(token) {
 
 export function hasRole(user, role) {
   return user?.role === role;
+}
+
+export function verifyJWT(token) {
+  try {
+    const decoded = jwtDecode(token);
+    // Sprawdź czy token nie wygasł
+    if (decoded.exp && Date.now() >= decoded.exp * 1000) {
+      return null;
+    }
+    return decoded;
+  } catch {
+    return null;
+  }
 }

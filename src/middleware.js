@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { verifyJWT } from "./src/lib/auth";
+import { verifyJWT } from "./lib/auth";
 
 // Define protected routes based on user roles
 const protectedRoutes = {
