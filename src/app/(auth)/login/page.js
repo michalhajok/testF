@@ -49,13 +49,13 @@ export default function LoginPage() {
       <div className="mt-6 text-center text-sm">
         <p className="text-gray-600">
           Nie masz jeszcze konta?{" "}
-          <Link href="/auth/register" className="text-blue-600 hover:underline">
+          <Link href="/register" className="text-blue-600 hover:underline">
             Zarejestruj się
           </Link>
         </p>
         <p className="mt-2">
           <Link
-            href="/auth/forgot-password"
+            href="/forgot-password"
             className="text-blue-600 hover:underline"
           >
             Zapomniałeś hasła?
