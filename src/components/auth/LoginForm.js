@@ -1,150 +1,100 @@
 "use client";
-
 import { useState } from "react";
 
-export default function LoginForm({ onSubmit }) {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-  const [loading, setLoading] = useState(false);
+export default function LoginForm({ onSubmit, loading }) {
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
 
   const validate = () => {
     const newErrors = {};
-
     if (!formData.email) {
       newErrors.email = "Email jest wymagany";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Niepoprawny format adresu email";
     }
-
     if (!formData.password) {
       newErrors.password = "Hasło jest wymagane";
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!validate()) return;
-
-    setLoading(true);
-
-    try {
-      await onSubmit(formData);
-    } catch (error) {
-      console.error("Login error:", error);
-    } finally {
-      setLoading(false);
-    }
+    await onSubmit(formData);
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-
-    // Clear error on input change
+    setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: undefined,
-      }));
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-4"
+      aria-label="Formularz logowania"
+    >
       <div>
-        <label
-          htmlFor="email"
-          className="block text-sm font-medium text-gray-700 mb-1"
-        >
-          Adres email
+        <label htmlFor="email" className="block text-sm font-medium mb-1">
+          Email
         </label>
         <input
-          type="email"
           id="email"
           name="email"
+          type="email"
+          autoComplete="username"
           value={formData.email}
           onChange={handleChange}
-          autoComplete="email"
-          required
           disabled={loading}
-          className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:outline-none ${
-            errors.email
-              ? "border-red-500 focus:ring-red-200"
-              : "border-gray-300 focus:ring-blue-200 focus:border-blue-400"
+          className={`w-full px-3 py-2 border rounded ${
+            errors.email ? "border-red-500" : "border-gray-300"
           }`}
-          placeholder="email@przyklad.pl"
+          aria-invalid={!!errors.email}
+          aria-describedby="email-error"
         />
         {errors.email && (
-          <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+          <span id="email-error" className="text-xs text-red-600">
+            {errors.email}
+          </span>
         )}
       </div>
-
       <div>
-        <label
-          htmlFor="password"
-          className="block text-sm font-medium text-gray-700 mb-1"
-        >
+        <label htmlFor="password" className="block text-sm font-medium mb-1">
           Hasło
         </label>
         <input
-          type="password"
           id="password"
           name="password"
+          type="password"
+          autoComplete="current-password"
           value={formData.password}
           onChange={handleChange}
-          autoComplete="current-password"
-          required
           disabled={loading}
-          className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:outline-none ${
-            errors.password
-              ? "border-red-500 focus:ring-red-200"
-              : "border-gray-300 focus:ring-blue-200 focus:border-blue-400"
+          className={`w-full px-3 py-2 border rounded ${
+            errors.password ? "border-red-500" : "border-gray-300"
           }`}
-          placeholder="••••••••"
+          aria-invalid={!!errors.password}
+          aria-describedby="password-error"
         />
         {errors.password && (
-          <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+          <span id="password-error" className="text-xs text-red-600">
+            {errors.password}
+          </span>
         )}
       </div>
-
-      <div className="flex items-center justify-between">
-        <div className="flex items-center">
-          <input
-            type="checkbox"
-            id="remember"
-            name="remember"
-            className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-          />
-          <label
-            htmlFor="remember"
-            className="ml-2 block text-sm text-gray-700"
-          >
-            Zapamiętaj mnie
-          </label>
-        </div>
-      </div>
-
-      <div>
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 
-                    text-white font-medium rounded-md focus:outline-none transition
-                    disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {loading ? "Logowanie..." : "Zaloguj się"}
-        </button>
-      </div>
+      <button
+        type="submit"
+        className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 disabled:opacity-50"
+        disabled={loading}
+        aria-busy={loading}
+      >
+        {loading ? "Logowanie..." : "Zaloguj się"}
+      </button>
     </form>
   );
 }

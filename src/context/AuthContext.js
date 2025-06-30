@@ -1,38 +1,69 @@
 "use client";
-import { createContext, useContext, useEffect, useState } from "react";
-import { getUserFromToken, login, logout } from "@/lib/auth";
+import { createContext, useContext, useReducer, useEffect } from "react";
+import { apiClient } from "@/lib/api/client";
 
-const AuthContext = createContext(null);
+const AppContext = createContext();
 
-export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
+const initialState = {
+  user: null,
+  isLoading: false,
+  patients: [],
+  appointments: [],
+  visits: [],
+  examinations: [],
+  notifications: [],
+};
+
+function appReducer(state, action) {
+  switch (action.type) {
+    case "SET_LOADING":
+      return { ...state, isLoading: action.payload };
+    case "SET_USER":
+      return { ...state, user: action.payload };
+    case "SET_PATIENTS":
+      return { ...state, patients: action.payload };
+    case "ADD_PATIENT":
+      return { ...state, patients: [...state.patients, action.payload] };
+    case "UPDATE_PATIENT":
+      return {
+        ...state,
+        patients: state.patients.map((p) =>
+          p._id === action.payload._id ? action.payload : p
+        ),
+      };
+    case "SET_APPOINTMENTS":
+      return { ...state, appointments: action.payload };
+    case "ADD_APPOINTMENT":
+      return {
+        ...state,
+        appointments: [...state.appointments, action.payload],
+      };
+    default:
+      return state;
+  }
+}
+
+export function AppProvider({ children }) {
+  const [state, dispatch] = useReducer(appReducer, initialState);
 
   useEffect(() => {
-    const token =
-      typeof window !== "undefined" ? localStorage.getItem("authToken") : null;
-    setUser(token ? getUserFromToken(token) : null);
+    const token = localStorage.getItem("token");
+    if (token) {
+      apiClient.setToken(token);
+    }
   }, []);
 
-  const handleLogin = async (credentials) => {
-    const { token } = await login(credentials);
-    localStorage.setItem("authToken", token);
-    setUser(getUserFromToken(token));
-  };
-
-  const handleLogout = () => {
-    logout();
-    setUser(null);
-  };
-
   return (
-    <AuthContext.Provider
-      value={{ user, login: handleLogin, logout: handleLogout }}
-    >
+    <AppContext.Provider value={{ state, dispatch }}>
       {children}
-    </AuthContext.Provider>
+    </AppContext.Provider>
   );
 }
 
-export function useAuth() {
-  return useContext(AuthContext);
-}
+export const useApp = () => {
+  const context = useContext(AppContext);
+  if (!context) {
+    throw new Error("useApp must be used within AppProvider");
+  }
+  return context;
+};

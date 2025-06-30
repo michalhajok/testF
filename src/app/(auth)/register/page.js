@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -9,23 +8,21 @@ import AuthHeader from "@/components/auth/AuthHeader";
 export default function RegisterPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleRegister = async (userData) => {
+    setError("");
+    setLoading(true);
     try {
       const response = await fetch("/api/auth/register", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData),
       });
-
       const data = await response.json();
-
       if (response.ok) {
         setSuccess(true);
-        // Redirect to login page after a short delay
         setTimeout(() => {
           router.push("/login");
         }, 3000);
@@ -35,41 +32,35 @@ export default function RegisterPage() {
     } catch (err) {
       setError("Błąd połączenia z serwerem");
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="bg-white shadow-lg rounded-lg p-8">
-      <AuthHeader
-        title="Rejestracja"
-        subtitle="Utwórz konto w systemie FizjoMed"
-      />
-
-      {error && (
-        <div className="mb-4 p-4 bg-red-50 border-l-4 border-red-500 text-red-700">
-          <p>{error}</p>
-        </div>
-      )}
-
+    <div>
+      <AuthHeader />
       {success ? (
-        <div className="mb-4 p-4 bg-green-50 border-l-4 border-green-500 text-green-700">
-          <p>
-            Rejestracja zakończona pomyślnie! Za chwilę zostaniesz przekierowany
-            na stronę logowania.
-          </p>
+        <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-md text-green-700">
+          Rejestracja zakończona pomyślnie! Za chwilę zostaniesz przekierowany
+          na stronę logowania.
         </div>
       ) : (
-        <RegisterForm onSubmit={handleRegister} />
+        <>
+          <RegisterForm onSubmit={handleRegister} loading={loading} />
+          {error && (
+            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md text-red-700">
+              {error}
+            </div>
+          )}
+          <div className="mt-6 text-center text-sm">
+            Masz już konto?{" "}
+            <Link href="/login" className="text-blue-600 hover:underline">
+              Zaloguj się
+            </Link>
+          </div>
+        </>
       )}
-
-      <div className="mt-6 text-center text-sm">
-        <p className="text-gray-600">
-          Masz już konto?{" "}
-          <Link href="/login" className="text-blue-600 hover:underline">
-            Zaloguj się
-          </Link>
-        </p>
-      </div>
     </div>
   );
 }
