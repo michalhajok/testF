@@ -1,64 +1,83 @@
-// src/lib/services/documentService.js
 import { apiClient } from "@/lib/api/client";
 
 export const documentService = {
-  /* CRUD ------------------------------------------------------------------ */
-  async getAll(params = {}) {
+  getAll(params = {}) {
     const qs = new URLSearchParams(params).toString();
-    return apiClient.get(`/api/documents${qs ? `?${qs}` : ""}`);
+    return apiClient.backendGet(`/api/documents${qs ? `?${qs}` : ""}`);
   },
-  getById: (id) => apiClient.get(`/api/documents/${id}`),
-  getByPatient: (pId) => apiClient.get(`/api/documents?patient=${pId}`),
-  create: (d) => apiClient.post("/api/documents", d),
-  update: (id, d) => apiClient.put(`/api/documents/${id}`, d),
-  delete: (id) => apiClient.delete(`/api/documents/${id}`),
 
-  /* Generowanie i obsługa PDF -------------------------------------------- */
-  async generatePDF(id, opts = {}) {
-    const res = await fetch(`${apiClient.baseURL}/api/documents/${id}/pdf`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${
-          apiClient.token || localStorage.getItem("token")
-        }`,
-      },
-      body: JSON.stringify(opts),
+  getById(id) {
+    return apiClient.backendGet(`/api/documents/${id}`);
+  },
+
+  getByPatient(pId) {
+    return apiClient.backendGet(`/api/documents?patient=${pId}`);
+  },
+
+  create(data) {
+    return apiClient.backendPost("/api/documents", data);
+  },
+
+  update(id, data) {
+    return apiClient.backendPut(`/api/documents/${id}`, data);
+  },
+
+  delete(id) {
+    return apiClient.backendDelete(`/api/documents/${id}`);
+  },
+
+  generatePDF(id, opts = {}) {
+    return apiClient.backendPost(`/api/documents/${id}/pdf`, opts);
+  },
+
+  downloadPDF(id, fname = `document-${id}.pdf`) {
+    return this.generatePDF(id).then((blob) => {
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const a = Object.assign(document.createElement("a"), {
+        href: url,
+        download: fname,
+      });
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
     });
-    if (!res.ok) throw new Error("Błąd podczas generowania PDF");
-    return res.blob(); // <- zwraca Blob
   },
 
-  async downloadPDF(id, fname = `document-${id}.pdf`) {
-    const blob = await this.generatePDF(id);
-    const url = window.URL.createObjectURL(blob);
-    const a = Object.assign(document.createElement("a"), {
-      href: url,
-      download: fname,
+  previewPDF(id) {
+    return this.generatePDF(id).then((blob) => {
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      window.open(url, "_blank");
     });
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    window.URL.revokeObjectURL(url);
   },
 
-  previewPDF: async function (id) {
-    const blob = await this.generatePDF(id);
-    window.open(window.URL.createObjectURL(blob), "_blank");
+  getTemplates() {
+    return apiClient.backendGet("/api/documents/templates");
   },
 
-  /* Szablony i podpis elektroniczny -------------------------------------- */
-  getTemplates: () => apiClient.get("/api/documents/templates"),
-  createFromTemplate: (tId, data) =>
-    apiClient.post(`/api/documents/templates/${tId}/generate`, data),
+  createFromTemplate(tId, data) {
+    return apiClient.backendPost(
+      `/api/documents/templates/${tId}/generate`,
+      data
+    );
+  },
 
-  signDocument: (id, sig) => apiClient.post(`/api/documents/${id}/sign`, sig),
-  getSignatureStatus: (id) =>
-    apiClient.get(`/api/documents/${id}/signature-status`),
+  signDocument(id, sig) {
+    return apiClient.backendPost(`/api/documents/${id}/sign`, sig);
+  },
 
-  /* Udostępnianie pacjentom ---------------------------------------------- */
-  shareWithPatient: (id, pId, o) =>
-    apiClient.post(`/api/documents/${id}/share`, { patientId: pId, ...o }),
-  getSharedDocuments: (pId) =>
-    apiClient.get(`/api/documents/shared?patient=${pId}`),
+  getSignatureStatus(id) {
+    return apiClient.backendGet(`/api/documents/${id}/signature-status`);
+  },
+
+  shareWithPatient(id, pId, o) {
+    return apiClient.backendPost(`/api/documents/${id}/share`, {
+      patientId: pId,
+      ...o,
+    });
+  },
+
+  getSharedDocuments(pId) {
+    return apiClient.backendGet(`/api/documents/shared?patient=${pId}`);
+  },
 };

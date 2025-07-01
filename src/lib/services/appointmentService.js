@@ -2,50 +2,49 @@ import { apiClient } from "@/lib/api/client";
 import { format } from "date-fns";
 
 export const appointmentService = {
-  async getAll(params = {}) {
-    const queryString = new URLSearchParams(params).toString();
-    const endpoint = `/api/appointments${queryString ? `?${queryString}` : ""}`;
-    return await apiClient.get(endpoint);
+  getAll(params = {}) {
+    const qs = new URLSearchParams(params).toString();
+    return apiClient.backendGet(`/api/appointments${qs ? `?${qs}` : ""}`);
   },
 
-  async getById(id) {
-    return await apiClient.get(`/api/appointments/${id}`);
+  getById(id) {
+    return apiClient.backendGet(`/api/appointments/${id}`);
   },
 
-  async getByDateRange(startDate, endDate) {
-    const params = {
-      startDate: format(startDate, "yyyy-MM-dd"),
-      endDate: format(endDate, "yyyy-MM-dd"),
-    };
-    return await this.getAll(params);
+  getByDateRange(startDate, endDate) {
+    const qs = `?startDate=${format(startDate, "yyyy-MM-dd")}&endDate=${format(
+      endDate,
+      "yyyy-MM-dd"
+    )}`;
+    return apiClient.backendGet(`/api/appointments${qs}`);
   },
 
-  async create(appointmentData) {
-    return await apiClient.post("/api/appointments", appointmentData);
+  create(appointmentData) {
+    return apiClient.backendPost("/api/appointments", appointmentData);
   },
 
-  async update(id, appointmentData) {
-    return await apiClient.put(`/api/appointments/${id}`, appointmentData);
+  update(id, appointmentData) {
+    return apiClient.backendPut(`/api/appointments/${id}`, appointmentData);
   },
 
-  async delete(id) {
-    return await apiClient.delete(`/api/appointments/${id}`);
+  delete(id) {
+    return apiClient.backendDelete(`/api/appointments/${id}`);
   },
 
-  async confirm(id) {
-    return await apiClient.patch(`/api/appointments/${id}/confirm`);
+  confirm(id) {
+    return apiClient.backendPatch(`/api/appointments/${id}/confirm`);
   },
 
-  async cancel(id, reason) {
-    return await apiClient.patch(`/api/appointments/${id}/cancel`, { reason });
+  cancel(id, reason) {
+    return apiClient.backendPatch(`/api/appointments/${id}/cancel`, { reason });
   },
 
-  async complete(id) {
-    return await apiClient.patch(`/api/appointments/${id}/complete`);
+  complete(id) {
+    return apiClient.backendPatch(`/api/appointments/${id}/complete`);
   },
 
-  async getAvailableSlots(employeeId, date) {
-    return await apiClient.get(
+  getAvailableSlots(employeeId, date) {
+    return apiClient.backendGet(
       `/api/appointments/available-slots?employeeId=${employeeId}&date=${date}`
     );
   },

@@ -1,39 +1,38 @@
 import { apiClient } from "@/lib/api/client";
 
 export const patientService = {
-  async getAll(params = {}) {
-    const queryString = new URLSearchParams(params).toString();
-    const endpoint = `/api/patients${queryString ? `?${queryString}` : ""}`;
-    return await apiClient.get(endpoint);
+  getAll(params = {}) {
+    const qs = new URLSearchParams(params).toString();
+    return apiClient.backendGet(`/api/patients${qs ? `?${qs}` : ""}`);
   },
 
-  async getById(id) {
-    return await apiClient.get(`/api/patients/${id}`);
+  getById(id) {
+    return apiClient.backendGet(`/api/patients/${id}`);
   },
 
-  async create(patientData) {
-    return await apiClient.post("/api/patients", patientData);
+  create(patientData) {
+    return apiClient.backendPost("/api/patients", patientData);
   },
 
-  async update(id, patientData) {
-    return await apiClient.put(`/api/patients/${id}`, patientData);
+  update(id, patientData) {
+    return apiClient.backendPut(`/api/patients/${id}`, patientData);
   },
 
-  async delete(id) {
-    return await apiClient.delete(`/api/patients/${id}`);
+  delete(id) {
+    return apiClient.backendDelete(`/api/patients/${id}`);
   },
 
-  async search(query) {
-    return await apiClient.get(
+  search(query) {
+    return apiClient.backendGet(
       `/api/patients/search?q=${encodeURIComponent(query)}`
     );
   },
 
-  async getVisitHistory(patientId) {
-    return await apiClient.get(`/api/patients/${patientId}/visits`);
+  getVisitHistory(patientId) {
+    return apiClient.backendGet(`/api/patients/${patientId}/visits`);
   },
 
-  async getExaminations(patientId) {
-    return await apiClient.get(`/api/patients/${patientId}/examinations`);
+  getExaminations(patientId) {
+    return apiClient.backendGet(`/api/patients/${patientId}/examinations`);
   },
 };

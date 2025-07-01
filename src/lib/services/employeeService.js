@@ -1,35 +1,60 @@
-// src/lib/services/employeeService.js
 import { apiClient } from "@/lib/api/client";
 
 export const employeeService = {
-  /* CRUD ------------------------------------------------------------------ */
-  async getAll(params = {}) {
+  getAll(params = {}) {
     const qs = new URLSearchParams(params).toString();
-    return apiClient.get(`/api/employees${qs ? `?${qs}` : ""}`);
+    return apiClient.backendGet(`/api/employees${qs ? `?${qs}` : ""}`);
   },
-  getById: (id) => apiClient.get(`/api/employees/${id}`),
-  create: (data) => apiClient.post("/api/employees", data),
-  update: (id, d) => apiClient.put(`/api/employees/${id}`, d),
-  delete: (id) => apiClient.delete(`/api/employees/${id}`),
 
-  /* Filtry i role --------------------------------------------------------- */
-  getByRole: (r) => apiClient.get(`/api/employees?role=${r}`),
-  getPhysiotherapists: function () {
+  getById(id) {
+    return apiClient.backendGet(`/api/employees/${id}`);
+  },
+
+  create(data) {
+    return apiClient.backendPost("/api/employees", data);
+  },
+
+  update(id, data) {
+    return apiClient.backendPut(`/api/employees/${id}`, data);
+  },
+
+  delete(id) {
+    return apiClient.backendDelete(`/api/employees/${id}`);
+  },
+
+  getByRole(role) {
+    return apiClient.backendGet(`/api/employees?role=${role}`);
+  },
+
+  getPhysiotherapists() {
     return this.getByRole("physiotherapist");
   },
 
-  /* Status, uprawnienia, harmonogram ------------------------------------- */
-  updateStatus: (id, s) =>
-    apiClient.patch(`/api/employees/${id}/status`, { status: s }),
-  resetPassword: (id) => apiClient.post(`/api/employees/${id}/reset-password`),
+  updateStatus(id, status) {
+    return apiClient.backendPatch(`/api/employees/${id}/status`, { status });
+  },
 
-  getSchedule: (id, d) =>
-    apiClient.get(`/api/employees/${id}/schedule?date=${d}`),
-  updateSchedule: (id, d) => apiClient.put(`/api/employees/${id}/schedule`, d),
+  resetPassword(id) {
+    return apiClient.backendPost(`/api/employees/${id}/reset-password`);
+  },
 
-  /* Analizy obciążenia ---------------------------------------------------- */
-  getWorkload: (id, st, end) =>
-    apiClient.get(`/api/employees/${id}/workload?start=${st}&end=${end}`),
-  getAvailability: (id, d) =>
-    apiClient.get(`/api/employees/${id}/availability?date=${d}`),
+  getSchedule(id, date) {
+    return apiClient.backendGet(`/api/employees/${id}/schedule?date=${date}`);
+  },
+
+  updateSchedule(id, scheduleData) {
+    return apiClient.backendPut(`/api/employees/${id}/schedule`, scheduleData);
+  },
+
+  getWorkload(id, start, end) {
+    return apiClient.backendGet(
+      `/api/employees/${id}/workload?start=${start}&end=${end}`
+    );
+  },
+
+  getAvailability(id, date) {
+    return apiClient.backendGet(
+      `/api/employees/${id}/availability?date=${date}`
+    );
+  },
 };

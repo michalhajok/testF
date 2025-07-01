@@ -1,13 +1,8 @@
-// src/lib/api/client.js
 import { toast } from "react-hot-toast";
 
 class ApiClient {
   constructor() {
-    // Dla komunikacji z backendem
     this.backendURL = process.env.BACKEND_URL || "http://localhost:3001";
-    // Dla wewnętrznych API routes Next.js
-    this.apiURL =
-      process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
     this.token = null;
   }
 
@@ -18,8 +13,7 @@ class ApiClient {
     }
   }
 
-  async request(endpoint, options = {}, useBackend = false) {
-    const baseURL = useBackend ? this.backendURL : this.apiURL;
+  async request(baseURL, endpoint, options = {}) {
     const url = `${baseURL}${endpoint}`;
     const token =
       this.token ||
@@ -36,14 +30,12 @@ class ApiClient {
 
     try {
       const response = await fetch(url, config);
-
       if (!response.ok) {
         const errorData = await response
           .json()
           .catch(() => ({ message: "Network error" }));
         throw new Error(errorData.message || `HTTP ${response.status}`);
       }
-
       return await response.json();
     } catch (error) {
       toast.error(error.message);
@@ -51,27 +43,30 @@ class ApiClient {
     }
   }
 
-  // Metody dla Next.js API routes (localhost:3000)
-  get(endpoint) {
-    return this.request(endpoint, { method: "GET" });
+  // Direct backend methods
+  backendGet(endpoint) {
+    return this.request(this.backendURL, endpoint, { method: "GET" });
   }
-  post(endpoint, data) {
-    return this.request(endpoint, {
+  backendPost(endpoint, data) {
+    return this.request(this.backendURL, endpoint, {
       method: "POST",
       body: JSON.stringify(data),
     });
   }
-
-  // Metody dla komunikacji z backendem (localhost:3001)
-  backendGet(endpoint) {
-    return this.request(endpoint, { method: "GET" }, true);
+  backendPut(endpoint, data) {
+    return this.request(this.backendURL, endpoint, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    });
   }
-  backendPost(endpoint, data) {
-    return this.request(
-      endpoint,
-      { method: "POST", body: JSON.stringify(data) },
-      true
-    );
+  backendPatch(endpoint, data) {
+    return this.request(this.backendURL, endpoint, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    });
+  }
+  backendDelete(endpoint) {
+    return this.request(this.backendURL, endpoint, { method: "DELETE" });
   }
 }
 
