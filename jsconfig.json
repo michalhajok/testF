@@ -3,19 +3,19 @@
     "paths": {
       "@/*": ["./src/*"],
       "@components/*": ["./src/components/*"],
-      "@utils/*": ["./src/utils/*"],
-      "@styles/*": ["./src/styles/*"],
-      "@assets/*": ["./src/assets/*"],
-      "@hooks/*": ["./src/hooks/*"],
-      "@context/*": ["./src/context/*"],
-      "@services/*": ["./src/services/*"],
-      "@constants/*": ["./src/constants/*"],
-      "@types/*": ["./src/types/*"],
-      "@config/*": ["./src/config/*"],
-      "@pages/*": ["./src/pages/*"],
-      "@layouts/*": ["./src/layouts/*"],
-      "@store/*": ["./src/store/*"],
-      "@api/*": ["./src/api/*"]
+      "@/utils/*": ["./src/utils/*"],
+      "@/styles/*": ["./src/styles/*"],
+      "@/assets/*": ["./src/assets/*"],
+      "@/hooks/*": ["./src/hooks/*"],
+      "@/context/*": ["./src/context/*"],
+      "@/services/*": ["./src/services/*"],
+      "@/constants/*": ["./src/constants/*"],
+      "@/types/*": ["./src/types/*"],
+      "@/config/*": ["./src/config/*"],
+      "@/pages/*": ["./src/pages/*"],
+      "@/layouts/*": ["./src/layouts/*"],
+      "@/store/*": ["./src/store/*"],
+      "@/api/*": ["./src/api/*"]
     }
   }
 }

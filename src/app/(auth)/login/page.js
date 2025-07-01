@@ -23,7 +23,7 @@ export default function LoginPage() {
       });
       const data = await response.json();
       if (response.ok) {
-        // Możesz tu zapisać token do localStorage/cookies jeśli backend go zwraca
+        localStorage.setItem("token", data.token);
         router.push(callbackUrl);
       } else {
         setError(data.message || "Wystąpił błąd podczas logowania");

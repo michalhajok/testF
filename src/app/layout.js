@@ -1,5 +1,7 @@
 // src/app/layout.js
-import { AppProvider } from "@/context/AppContext";
+import "./globals.css";
+
+import { AppProvider } from "@/context/AuthContext";
 
 export default function RootLayout({ children }) {
   return (

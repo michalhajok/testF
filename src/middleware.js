@@ -1,3 +1,4 @@
+/*
 import { NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
@@ -73,3 +74,28 @@ export const config = {
     "/((?!_next/static|_next/image|favicon.ico|.*\\.png$|.*\\.jpg$|.*\\.svg$).*)",
   ],
 };
+*/
+
+// src/app/api/auth/logout/route.js
+import { NextResponse } from "next/server";
+
+export async function POST(request) {
+  try {
+    const response = NextResponse.json({ success: true });
+
+    // Usuń cookie
+    response.cookies.set("auth-token", "", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 0, // Natychmiastowe wygaśnięcie
+    });
+
+    return response;
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Błąd podczas wylogowywania" },
+      { status: 500 }
+    );
+  }
+}
