@@ -44,17 +44,16 @@ export default function Sidebar({ role }) {
             const isActive = router.pathname === path;
             return (
               <li key={path}>
-                <Link href={path}>
-                  <a
-                    className={
-                      "block py-2 px-3 rounded " +
-                      (isActive
-                        ? "bg-medical-primary text-white"
-                        : "hover:bg-medical-light text-gray-700")
-                    }
-                  >
-                    {label}
-                  </a>
+                <Link
+                  href={path}
+                  className={
+                    "block py-2 px-3 rounded " +
+                    (isActive
+                      ? "bg-medical-primary text-white"
+                      : "hover:bg-medical-light text-gray-700")
+                  }
+                >
+                  {label}
                 </Link>
               </li>
             );
