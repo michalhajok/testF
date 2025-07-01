@@ -1,9 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Calendar } from "@/components/ui/Calendar";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
+import Calendar from "@/components/ui/Calendar";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import Badge from "@/components/ui/Badge";
 import { appointmentService } from "@/lib/services/appointmentService";
 import { format, startOfDay, endOfDay } from "date-fns";
 import { pl } from "date-fns/locale";

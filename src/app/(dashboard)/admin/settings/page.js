@@ -1,5 +1,5 @@
-// src/app/(dashboard)/admin/settings/page.js
 "use client";
+
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import { adminService } from "@/lib/services/adminService";
@@ -25,13 +25,18 @@ export default function SettingsPage() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <Card className="p-6 space-y-4">
-        <Input label="Nazwa placówki" {...register("facilityName")} />
-        <Input label="Domyślny email" {...register("defaultEmail")} />
-        <Input label="Telefon kontaktowy" {...register("contactPhone")} />
-      </Card>
-      <Button variant="primary">Zapisz zmiany</Button>
-    </form>
+    <section className="max-w-3xl mx-auto">
+      <h2 className="text-2xl font-semibold mb-6">Ustawienia Systemu</h2>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <Card className="p-6 space-y-4">
+          <Input label="Nazwa placówki" {...register("facilityName")} />
+          <Input label="Domyślny email" {...register("defaultEmail")} />
+          <Input label="Telefon kontaktowy" {...register("contactPhone")} />
+        </Card>
+        <Button type="submit" variant="primary">
+          Zapisz zmiany
+        </Button>
+      </form>
+    </section>
   );
 }

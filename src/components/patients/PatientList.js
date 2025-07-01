@@ -1,12 +1,12 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useApp } from "@/context/AppContext";
+import { useApp } from "@/context/AuthContext";
 import { patientService } from "@/lib/services/patientService";
-import { Card } from "@/components/ui/Card";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
-import { Spinner } from "@/components/ui/Spinner";
+import Card from "@/components/ui/Card";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
+import Badge from "@/components/ui/Badge";
+import Spinner from "@/components/ui/Spinner";
 
 export default function PatientList() {
   const { state, dispatch } = useApp();

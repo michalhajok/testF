@@ -2,13 +2,9 @@ import PatientForm from "@/components/patients/PatientForm";
 
 export default function NewPatientPage() {
   return (
-    <div className="p-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">
-          Dodaj nowego pacjenta
-        </h1>
-      </div>
+    <section>
+      <h2 className="text-2xl font-semibold mb-6">Dodaj nowego pacjenta</h2>
       <PatientForm mode="create" />
-    </div>
+    </section>
   );
 }
