@@ -1,63 +1,37 @@
+// src/app/(dashboard)/admin/settings/page.js
 "use client";
-import { useState } from "react";
-import Input from "@/components/ui/Input";
-import Button from "@/components/ui/Button";
+import { useForm } from "react-hook-form";
+import { useEffect } from "react";
+import { adminService } from "@/lib/services/adminService";
+import { Card } from "@/components/ui/Card";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
+import { toast } from "react-hot-toast";
 
-export default function AdminSettingsPage() {
-  const [settings, setSettings] = useState({
-    clinicName: "",
-    address: "",
-    phone: "",
-    email: "",
-  });
+export default function SettingsPage() {
+  const { register, handleSubmit, reset } = useForm();
 
-  // Pobierz aktualne ustawienia z API po zamontowaniu komponentu
-  // useEffect(() => { ... }, []);
+  useEffect(() => {
+    adminService.getSystemSettings().then(reset);
+  }, [reset]);
 
-  const handleChange = (e) => {
-    setSettings({ ...settings, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Wyślij dane do API
-    // fetch('/api/settings', { method: 'PUT', body: JSON.stringify(settings) })
+  const onSubmit = async (data) => {
+    try {
+      await adminService.updateSystemSettings(data);
+      toast.success("Zapisano ustawienia");
+    } catch {
+      toast.error("Błąd zapisu");
+    }
   };
 
   return (
-    <section className="p-6 max-w-xl">
-      <h1 className="text-2xl font-bold mb-4">Ustawienia systemowe</h1>
-      <form className="space-y-4" onSubmit={handleSubmit}>
-        <Input
-          label="Nazwa kliniki"
-          name="clinicName"
-          value={settings.clinicName}
-          onChange={handleChange}
-          required
-        />
-        <Input
-          label="Adres"
-          name="address"
-          value={settings.address}
-          onChange={handleChange}
-          required
-        />
-        <Input
-          label="Telefon"
-          name="phone"
-          value={settings.phone}
-          onChange={handleChange}
-          required
-        />
-        <Input
-          label="E-mail"
-          name="email"
-          value={settings.email}
-          onChange={handleChange}
-          required
-        />
-        <Button type="submit">Zapisz zmiany</Button>
-      </form>
-    </section>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <Card className="p-6 space-y-4">
+        <Input label="Nazwa placówki" {...register("facilityName")} />
+        <Input label="Domyślny email" {...register("defaultEmail")} />
+        <Input label="Telefon kontaktowy" {...register("contactPhone")} />
+      </Card>
+      <Button variant="primary">Zapisz zmiany</Button>
+    </form>
   );
 }

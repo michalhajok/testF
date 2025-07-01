@@ -1,65 +1,49 @@
+// src/app/(dashboard)/admin/page.js
 "use client";
-import StatsCard from "@/components/dashboard/StatsCard";
-import RecentActivity from "@/components/dashboard/RecentActivity";
-import QuickActions from "@/components/dashboard/QuickActions";
-import NotificationCenter from "@/components/dashboard/NotificationCenter";
+import { useEffect, useState } from "react";
+import { adminService } from "@/lib/services/adminService";
+import { Card } from "@/components/ui/Card";
+import { Spinner } from "@/components/ui/Spinner";
 
-export default function AdminDashboardPage() {
-  // Przykładowe dane – w praktyce pobierane z API
-  const stats = [
-    { icon: "👥", title: "Pacjenci", value: 1234, change: 4 },
-    { icon: "🗓️", title: "Wizyty", value: 321, change: -2 },
-    { icon: "💰", title: "Przychód", value: "12 300 zł", change: 8 },
-    { icon: "👨‍⚕️", title: "Pracownicy", value: 12, change: 0 },
-  ];
+export default function AdminDashboard() {
+  const [stats, setStats] = useState(null);
+  const [loading, setLoad] = useState(true);
 
-  const actions = [
-    {
-      label: "Dodaj pacjenta",
-      icon: "➕",
-      onClick: () => {
-        /* ... */
-      },
-    },
-    {
-      label: "Umów wizytę",
-      icon: "📅",
-      onClick: () => {
-        /* ... */
-      },
-    },
-    {
-      label: "Wygeneruj raport",
-      icon: "📊",
-      onClick: () => {
-        /* ... */
-      },
-    },
-  ];
+  useEffect(() => {
+    (async () => {
+      try {
+        setStats(await adminService.getDashboardStats());
+      } catch {
+        /* obsłuż błąd */
+      } finally {
+        setLoad(false);
+      }
+    })();
+  }, []);
 
-  const activities = [
-    { type: "success", message: "Nowy pacjent: Jan Nowak", time: "5 min temu" },
-    {
-      type: "info",
-      message: "Wizyta zakończona: Anna Kowalska",
-      time: "10 min temu",
-    },
-  ];
+  if (loading)
+    return (
+      <div className="p-12 text-center">
+        <Spinner />
+      </div>
+    );
 
   return (
-    <main className="grid grid-cols-1 xl:grid-cols-2 gap-6 p-6">
-      <section className="space-y-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {stats.map((s, i) => (
-            <StatsCard key={i} {...s} />
-          ))}
-        </div>
-        <QuickActions actions={actions} />
-        <RecentActivity activities={activities} />
-      </section>
-      <aside>
-        <NotificationCenter />
-      </aside>
-    </main>
+    <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+      {stats.cards.map(({ title, value, diff }) => (
+        <Card key={title} className="p-6">
+          <p className="text-sm text-gray-500">{title}</p>
+          <p className="text-3xl font-semibold">{value}</p>
+          <p
+            className={`mt-1 text-sm ${
+              diff >= 0 ? "text-green-600" : "text-red-600"
+            }`}
+          >
+            {diff >= 0 ? "+" : ""}
+            {diff}% od poprzedniego okresu
+          </p>
+        </Card>
+      ))}
+    </div>
   );
 }
