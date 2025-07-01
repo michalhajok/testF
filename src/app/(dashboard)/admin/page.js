@@ -2,8 +2,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { adminService } from "@/lib/services/adminService";
-import { Card } from "@/components/ui/Card";
-import { Spinner } from "@/components/ui/Spinner";
+import Card from "@/components/ui/Card";
+import Spinner from "@/components/ui/Spinner";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
@@ -30,7 +30,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-      {stats.cards.map(({ title, value, diff }) => (
+      {stats?.cards.map(({ title, value, diff }) => (
         <Card key={title} className="p-6">
           <p className="text-sm text-gray-500">{title}</p>
           <p className="text-3xl font-semibold">{value}</p>

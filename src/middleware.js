@@ -1,6 +1,5 @@
-/*
+// src/middleware.js
 import { NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
 
 const protectedRoutes = [
   "/dashboard",
@@ -14,56 +13,30 @@ const protectedRoutes = [
   "/profile",
 ];
 
-const roleProtectedRoutes = {
-  "/admin": ["admin"],
-  "/employees/add": ["admin"],
-  "/reports/financial": ["admin"],
-};
-
 export async function middleware(request) {
   const { pathname } = request.nextUrl;
 
+  // Pozwól na wszystkie API routes
+  if (pathname.startsWith("/api/")) {
+    return NextResponse.next();
+  }
+
+  // Sprawdź czy to chroniona trasa
   const isProtectedRoute = protectedRoutes.some(
     (route) => pathname === route || pathname.startsWith(`${route}/`)
   );
 
-  const requiredRoles = Object.entries(roleProtectedRoutes)
-    .filter(([route]) => pathname === route || pathname.startsWith(`${route}/`))
-    .map(([_, roles]) => roles)
-    .flat();
-
-  // Jeśli nie jest to chroniona trasa i nie wymaga ról, pozwól przejść
-  if (!isProtectedRoute && requiredRoles.length === 0) {
+  if (!isProtectedRoute) {
     return NextResponse.next();
   }
 
-  // Pobierz token
-  const token = await getToken({
-    req: request,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
+  // Sprawdź token w cookie
+  const token = request.cookies.get("auth-token")?.value;
 
-  // Jeśli nie ma tokena, przekieruj do loginu
-  if (!token && isProtectedRoute) {
+  if (!token) {
     const url = new URL("/login", request.url);
     url.searchParams.set("callbackUrl", encodeURI(pathname));
     return NextResponse.redirect(url);
-  }
-
-  // Jeśli są wymagane role, sprawdź uprawnienia
-  if (requiredRoles.length > 0 && !requiredRoles.includes(token?.user?.role)) {
-    return NextResponse.redirect(new URL("/unauthorized", request.url));
-  }
-
-  // Jeśli user już zalogowany i wchodzi na login/register, przekieruj na dashboard
-  if (
-    ["/login", "/register", "/"].some(
-      (r) => pathname === r || pathname.startsWith(r)
-    )
-  ) {
-    if (token) {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
-    }
   }
 
   return NextResponse.next();
@@ -74,28 +47,3 @@ export const config = {
     "/((?!_next/static|_next/image|favicon.ico|.*\\.png$|.*\\.jpg$|.*\\.svg$).*)",
   ],
 };
-*/
-
-// src/app/api/auth/logout/route.js
-import { NextResponse } from "next/server";
-
-export async function POST(request) {
-  try {
-    const response = NextResponse.json({ success: true });
-
-    // Usuń cookie
-    response.cookies.set("auth-token", "", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 0, // Natychmiastowe wygaśnięcie
-    });
-
-    return response;
-  } catch (error) {
-    return NextResponse.json(
-      { error: "Błąd podczas wylogowywania" },
-      { status: 500 }
-    );
-  }
-}

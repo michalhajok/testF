@@ -1,13 +1,11 @@
 // src/app/api/auth/login/route.js
 import { NextResponse } from "next/server";
-import { apiClient } from "@/lib/api/client";
 
 export async function POST(request) {
   try {
     const body = await request.json();
     const { email, password } = body;
 
-    // Walidacja podstawowa
     if (!email || !password) {
       return NextResponse.json(
         { error: "Email i hasło są wymagane" },
@@ -15,8 +13,9 @@ export async function POST(request) {
       );
     }
 
-    // Wywołanie do backendu
-    const response = await fetch(`${process.env.BACKEND_URL}/api/auth/login`, {
+    // Komunikacja z backendem na porcie 3001
+    const backendUrl = process.env.BACKEND_URL || "http://localhost:3001";
+    const response = await fetch(`${backendUrl}/api/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -34,15 +33,26 @@ export async function POST(request) {
 
     const data = await response.json();
 
-    // Utworzenie response z cookie
+    // Backend zwraca: { success: true, data: { user, tokens } }
+    // Wyciągnij token z zagnieżdżonej struktury
+    const token = data.data?.tokens?.accessToken;
+    const user = data.data?.user;
+
+    if (!token) {
+      return NextResponse.json(
+        { error: "Brak tokenu w odpowiedzi" },
+        { status: 500 }
+      );
+    }
+
     const loginResponse = NextResponse.json({
       success: true,
-      user: data.user,
-      token: data.token,
+      user: user,
+      token: token, // Frontend oczekuje tokenu w głównym obiekcie
     });
 
-    // Ustawienie HTTP-only cookie
-    loginResponse.cookies.set("auth-token", data.token, {
+    // Ustaw cookie
+    loginResponse.cookies.set("auth-token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

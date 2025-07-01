@@ -4,7 +4,7 @@ const config = {
     "@tailwindcss/postcss": {},
   },
   env: {
-    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET || "asdsa",
+    BACKEND_URL: process.env.BACKEND_URL || "http://localhost:3001",
     NEXT_PUBLIC_API_URL:
       process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api",
   },

@@ -1,9 +1,13 @@
-// Główny klient API z interceptorami i obsługą błędów
+// src/lib/api/client.js
 import { toast } from "react-hot-toast";
 
 class ApiClient {
   constructor() {
-    this.baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+    // Dla komunikacji z backendem
+    this.backendURL = process.env.BACKEND_URL || "http://localhost:3001";
+    // Dla wewnętrznych API routes Next.js
+    this.apiURL =
+      process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
     this.token = null;
   }
 
@@ -14,8 +18,9 @@ class ApiClient {
     }
   }
 
-  async request(endpoint, options = {}) {
-    const url = `${this.baseURL}${endpoint}`;
+  async request(endpoint, options = {}, useBackend = false) {
+    const baseURL = useBackend ? this.backendURL : this.apiURL;
+    const url = `${baseURL}${endpoint}`;
     const token =
       this.token ||
       (typeof window !== "undefined" ? localStorage.getItem("token") : null);
@@ -46,7 +51,7 @@ class ApiClient {
     }
   }
 
-  // HTTP Methods
+  // Metody dla Next.js API routes (localhost:3000)
   get(endpoint) {
     return this.request(endpoint, { method: "GET" });
   }
@@ -56,20 +61,17 @@ class ApiClient {
       body: JSON.stringify(data),
     });
   }
-  put(endpoint, data) {
-    return this.request(endpoint, {
-      method: "PUT",
-      body: JSON.stringify(data),
-    });
+
+  // Metody dla komunikacji z backendem (localhost:3001)
+  backendGet(endpoint) {
+    return this.request(endpoint, { method: "GET" }, true);
   }
-  patch(endpoint, data) {
-    return this.request(endpoint, {
-      method: "PATCH",
-      body: JSON.stringify(data),
-    });
-  }
-  delete(endpoint) {
-    return this.request(endpoint, { method: "DELETE" });
+  backendPost(endpoint, data) {
+    return this.request(
+      endpoint,
+      { method: "POST", body: JSON.stringify(data) },
+      true
+    );
   }
 }
 

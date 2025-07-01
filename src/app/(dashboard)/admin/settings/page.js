@@ -3,9 +3,9 @@
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import { adminService } from "@/lib/services/adminService";
-import { Card } from "@/components/ui/Card";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
 import { toast } from "react-hot-toast";
 
 export default function SettingsPage() {
