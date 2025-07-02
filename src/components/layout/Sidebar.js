@@ -1,3 +1,4 @@
+// src/components/layout/Sidebar.js
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -37,23 +38,24 @@ export default function Sidebar({ role }) {
   const items = menuItems[role] || [];
 
   return (
-    <aside className="sidebar bg-white shadow-medical p-4 w-64 min-h-screen">
+    <aside className="sidebar bg-white shadow p-4 w-64 min-h-screen">
       <nav>
         <ul className="space-y-2">
           {items.map(({ label, path }) => {
             const isActive = router.pathname === path;
             return (
               <li key={path}>
-                <Link
-                  href={path}
-                  className={
-                    "block py-2 px-3 rounded " +
-                    (isActive
-                      ? "bg-medical-primary text-white"
-                      : "hover:bg-medical-light text-gray-700")
-                  }
-                >
-                  {label}
+                <Link href={path}>
+                  <span
+                    className={
+                      "block py-2 px-3 rounded " +
+                      (isActive
+                        ? "bg-medical-primary text-white"
+                        : "hover:bg-medical-light text-gray-700")
+                    }
+                  >
+                    {label}
+                  </span>
                 </Link>
               </li>
             );

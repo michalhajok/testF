@@ -3,29 +3,29 @@ import { apiClient } from "@/lib/api/client";
 
 export const adminService = {
   /* Metryki & raporty ----------------------------------------------------- */
-  getDashboardStats: () => apiClient.get("/api/admin/dashboard-stats"),
-  getSystemMetrics: () => apiClient.get("/api/admin/system-metrics"),
+  getDashboardStats: () => apiClient.backendGet("/api/admin/dashboard-stats"),
+  getSystemMetrics: () => apiClient.backendGet("/api/admin/system-metrics"),
   getFinancialReport: (s, e) =>
-    apiClient.get(`/api/admin/financial-report?start=${s}&end=${e}`),
+    apiClient.backendGet(`/api/admin/financial-report?start=${s}&end=${e}`),
   getPatientStats: (p = "month") =>
-    apiClient.get(`/api/admin/patient-stats?period=${p}`),
-  getEmployeeStats: () => apiClient.get("/api/admin/employee-stats"),
+    apiClient.backendGet(`/api/admin/patient-stats?period=${p}`),
+  getEmployeeStats: () => apiClient.backendGet("/api/admin/employee-stats"),
   getVisitStats: (p = "month") =>
-    apiClient.get(`/api/admin/visit-stats?period=${p}`),
+    apiClient.backendGet(`/api/admin/visit-stats?period=${p}`),
 
   /* Ustawienia i konfiguracja -------------------------------------------- */
-  getSystemSettings: () => apiClient.get("/api/admin/settings"),
+  getSystemSettings: () => apiClient.backendGet("/api/admin/settings"),
   updateSystemSettings: (s) => apiClient.put("/api/admin/settings", s),
 
-  getFacilitySettings: () => apiClient.get("/api/admin/facility"),
+  getFacilitySettings: () => apiClient.backendGet("/api/admin/facility"),
   updateFacilitySettings: (s) => apiClient.put("/api/admin/facility", s),
 
-  getServicePricing: () => apiClient.get("/api/admin/services/pricing"),
+  getServicePricing: () => apiClient.backendGet("/api/admin/services/pricing"),
   updateServicePricing: (d) => apiClient.put("/api/admin/services/pricing", d),
 
   /* Użytkownicy & role ---------------------------------------------------- */
   getAllUsers: (p = {}) =>
-    apiClient.get(`/api/admin/users?${new URLSearchParams(p)}`),
+    apiClient.backendGet(`/api/admin/users?${new URLSearchParams(p)}`),
   updateUserRole: (id, r) =>
     apiClient.patch(`/api/admin/users/${id}/role`, { role: r }),
   updateUserPermissions: (id, perm) =>
@@ -37,7 +37,7 @@ export const adminService = {
 
   /* Kopie zapasowe / eksport --------------------------------------------- */
   backupDatabase: () => apiClient.post("/api/admin/backup"),
-  getBackupHistory: () => apiClient.get("/api/admin/backups"),
+  getBackupHistory: () => apiClient.backendGet("/api/admin/backups"),
   exportData: async (type, o = {}) => {
     const res = await fetch(`${apiClient.baseURL}/api/admin/export/${type}`, {
       method: "POST",
